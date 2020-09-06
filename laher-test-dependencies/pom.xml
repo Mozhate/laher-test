@@ -11,6 +11,7 @@
 
     <properties>
         <guava.version>27.1-jre</guava.version>
+        <drools.version>7.42.0.Final</drools.version>
     </properties>
 
     <dependencyManagement>
@@ -19,6 +20,13 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-bom</artifactId>
+                <version>${drools.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
