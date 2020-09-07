@@ -22,6 +22,14 @@
             <artifactId>drools-compiler</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!--可以单独使用kie-ci作为依赖项，因为该包包含了以上kie-api和drools-compiler
+        也支持从Mvn库动态加载KieModule，但是会依赖一堆其他环境包（mvn、source等）
+        为了项目清洁、轻便，不建议使用-->
+        <!--<dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-ci</artifactId>
+        </dependency>-->
     </dependencies>
 
     ​

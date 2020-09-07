@@ -1,0 +1,10 @@
+package com.laher.test.entity
+
+import com.laher.test.entity.Applicant
+
+rule "valid age success"
+when
+    $app : Applicant(age<18)
+then
+    $app.setValid(false);
+end

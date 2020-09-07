@@ -1,6 +1,6 @@
 <kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://www.drools.org/xsd/kmodule">
-    <configuration>
+    <!--<configuration>
         <property key="drools.evaluator.supersetOf" value="org.mycompany.SupersetOfEvaluatorDefinition"/>
     </configuration>
     <kbase name="KBase1" default="true" eventProcessingMode="cloud" equalsBehavior="equality"
@@ -25,5 +25,36 @@
                 <processEventListener type="org.domain.ProcessListener"/>
             </listeners>
         </ksession>
+    </kbase>-->
+
+    <kbase name="kbase1">
+        <ksession name="ksession1">
+        </ksession>
+    </kbase>
+
+    <kbase name="kbase2" includes="kbase1">
+        <ksession name="ksession2">
+
+        </ksession>
+    </kbase>
+
+    <kbase name="kbase3" includes="kbase2" packages="org.some.pkg2">
+        <ksession name="ksession3"/>
+    </kbase>
+
+    <kbase name="kbase4" packages="org.some.pkg, org.other.pkg">
+        <ksession name="ksession4"/>
+    </kbase>
+
+    <kbase name="kbase5" packages="org.*">
+        <ksession name="ksession5"/>
+    </kbase>
+
+    <kbase name="kbase6" packages="org.some.*">
+        <ksession name="ksession6"/>
+    </kbase>
+
+    <kbase name="kbase7" >
+        <ksession name="ksession7" type="stateless" />
     </kbase>
 </kmodule>
