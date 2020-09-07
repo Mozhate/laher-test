@@ -1,0 +1,36 @@
+package com.laher.test.entity
+import com.laher.test.entity.MyFact
+
+rule "is true"
+salience 90
+when $fact : MyFact(field1 == true)
+then 
+    System.out.println("true say : "+$fact);
+end
+
+rule "is true to a agenda"
+salience 90
+agenda-group "a-agenda"
+when $fact : MyFact(field1 == true)
+then
+    System.out.println("true say a-agenda : "+$fact);
+end
+
+rule "is false"
+salience 100
+agenda-group "a-agenda"
+when $fact : MyFact(field1 == false,field2>1)
+then
+    System.out.println("false say 100 a-agenda: "+$fact);
+    $fact.setField1(true);
+    update($fact)
+end
+
+rule "is false 110"
+salience 110
+when $fact : MyFact(field1 == false,field2>2)
+then
+    System.out.println("false say 110: "+$fact);
+    $fact.setField1(true);
+    update($fact)
+end

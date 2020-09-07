@@ -22,6 +22,7 @@ import org.kie.api.runtime.*;
 import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.api.runtime.rule.FactHandle;
 import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
 import org.kie.internal.command.CommandFactory;
 
 import java.io.PrintStream;
@@ -48,9 +49,146 @@ public class TestDemo {
         // new TestDemo().demo10();
         // new TestDemo().demo11();
         // new TestDemo().demo12();
-        new TestDemo().demo13();
+        // new TestDemo().demo13();
+        // new TestDemo().demo14();
+        // new TestDemo().demo15();
+        // new TestDemo().demo16();
+        new TestDemo().demo17();
 
         System.out.println("运行结束");
+    }
+
+    /**
+     * 数据传播模式 Lazy: (Default)数据是在规则执行时在批处理集合中传播的，而不是实时的，因为数据是由用户或应用程序单独插入的</br>
+     * Immediate: 数据按照用户或应用程序插入事实的顺序立即传播</br>
+     * Eager: 数据（在批处理集合中）延迟传播，但在规则执行之前传播
+     */
+    private void demo17() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+
+        Query query1 = new Query(1);
+        Query query2 = new Query("1");
+        Query query3 = new Query("3");
+        Query query4 = new Query("1");
+
+        kieSession.insert(query1);
+        kieSession.insert(query2);
+        kieSession.insert(query3);
+
+        kieSession.fireAllRules();
+
+        // 特别注意：query4未执行，只是加入空间中
+        kieSession.insert(query4);
+        /**
+         * query的名字是全局性的</br>
+         * 功能是将运行过的规则数据进行存储（working memory），做二次查询操作
+         */
+        System.out.println("-------分割线--------");
+        QueryResults result = kieSession.getQueryResults("query1");
+        System.out.println("大小为：" + result.size());
+        for (QueryResultsRow row : result) {
+            Query query = (Query)row.get("$query");
+            System.out.println("遍历结果：" + query.getQ());
+        }
+        /**
+         * 结果</br>
+         * Query{q=1}</br>
+         * Query{q=1}</br>
+         * Query{q=3}</br>
+         * -------分割线--------</br>
+         * 大小为：3</br>
+         * 遍历结果：1</br>
+         * 遍历结果：1</br>
+         * 遍历结果：1</br>
+         *
+         * 只要被insert入drools工作空间，都会被进行筛选如：query4</br>
+         *
+         */
+    }
+
+    /**
+     * activation-group活动组</br>
+     * 同组中合法规则只执行一次，执行后规则将被删除
+     */
+    private void demo16() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.getAgenda().getAgendaGroup("a-activation").setFocus();
+
+        // 实例化对象
+        Alarm alarm1 = new Alarm("laher");
+        Alarm alarm2 = new Alarm("laherz");
+        // kieSession.insert(alarm1);
+        // kieSession.insert(alarm2);
+        // kieSession.fireAllRules();
+        /**
+         * 上面结果：</br>
+         * a to laher</br>
+         * 第二个laherz没有执行输出命令，在一个fireAllRules规则中</br>
+         * 同一个activation-group只允许被执行一次
+         */
+
+        // 运行以下请注释fireAllRules 和 insert
+
+        kieSession.insert(alarm1);
+        kieSession.fireAllRules();
+
+        kieSession.insert(alarm1);
+        kieSession.insert(alarm2);
+        kieSession.fireAllRules();
+        /**
+         * 注释后，上面结果：<br/>
+         * a to laher<br/>
+         * b to laherz<br/>
+         * 被删除后，第二个kieSession.insert(alarm1);是无效的</br>
+         * 在整个fireAllRules环节中已经被移除
+         */
+    }
+
+    /**
+     * agenda-group议程组</br>
+     * 1. 如果没有指定agenda-group 则默认把所有未指定agenda-group的 rules 都执行一遍</br>
+     * 2. 如果指定了agenda-group 使用的时候必须指定该name才能被使用，默认是不能使用的</br>
+     * 3. agenda-group name可以重复</br>
+     * 4. agenda-group 用于区分rule</br>
+     */
+    private void demo15() {
+        /**
+         * 结果：<br/>
+         * false say 100 a-agenda: MyFact{field1=false}<br/>
+         * true say a-agenda : MyFact{field1=true}<br/>
+         * true say : MyFact{field1=true}<br/>
+         * 由结果可知，一次请求只对当前规则有效<br/>
+         * 而规则内的update、insert会无视agenda-group规则<br/>
+         * 触发合法的规则
+         */
+        MyFact fact = new MyFact(false, 3);
+
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.getAgenda().getAgendaGroup("a-agenda").setFocus();
+        kieSession.insert(fact);
+        kieSession.fireAllRules();
+    }
+
+    /**
+     * Drools规则引擎可能存在符合多个规则模式，通过策略和顺序来进行控制
+     */
+    private void demo14() {
+        MyFact fact = new MyFact(false, 3);
+
+        // 满足规则：
+        // 多个规则同时满足，优先级别salience，其次文件顺序，只执行最符合的规则一次
+        // 每个rule都有一个整数salience属性（默认0，支持正负），该属性确定执行顺序，越大优先级越高
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.insert(fact);
+        kieSession.fireAllRules();
     }
 
     /**
@@ -80,7 +218,7 @@ public class TestDemo {
         // equality
         KieBaseConfiguration kieBaseConfiguration = kieServices.newKieBaseConfiguration();
         kieBaseConfiguration.setOption(EqualityBehaviorOption.EQUALITY);
-        KieBase kieBase = kieContainer.newKieBase(kieBaseConfiguration);
+        KieBase kieBase = kieContainer.newKieBase("kbase1", kieBaseConfiguration);
         KieSession eqKieSession = kieBase.newKieSession();
         FactHandle eqFactHandle1 = eqKieSession.getFactHandle(eqKieSession.insert(p1));
         FactHandle eqFactHandle2 = eqKieSession.getFactHandle(eqKieSession.insert(p2));
@@ -180,7 +318,7 @@ public class TestDemo {
      * 生产内存：在Drools引擎中存储规则的位置<br/>
      * 工作记忆：事实存储在Drools引擎中的位置<br/>
      * 议程：已注册激活规则并对其进行排序（如果适用）以准备执行的位置<br/>
-     * 
+     *
      */
 
     /**

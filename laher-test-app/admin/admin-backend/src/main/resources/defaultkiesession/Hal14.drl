@@ -1,0 +1,12 @@
+package com.laher.test.entity
+import com.laher.test.entity.Query
+
+query "query1"
+    $query : Query(q == 1)
+end
+
+rule "14 rule"
+when $i : Query()
+then
+    System.out.println($i);
+end

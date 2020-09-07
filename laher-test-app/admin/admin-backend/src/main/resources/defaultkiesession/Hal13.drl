@@ -1,0 +1,16 @@
+package com.laher.test.entity
+import com.laher.test.entity.Alarm
+
+rule "a activation"
+activation-group "a-activation"
+when $alarm : Alarm(name == "laher")
+then
+    System.out.println("a to " + $alarm.getName());
+end
+
+rule "b activation"
+activation-group "a-activation"
+when $alarm : Alarm(name == "laherz")
+then
+    System.out.println("b to " + $alarm.getName());
+end

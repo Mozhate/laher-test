@@ -10,6 +10,17 @@ package com.laher.test.entity;
 public class Alarm {
     private String name;
 
+    public Alarm(String name) {
+        this.name = name;
+    }
+
+    public Alarm() {}
+
+    @Override
+    public String toString() {
+        return "Alarm{" + "name='" + name + '\'' + '}';
+    }
+
     public String getName() {
         return name;
     }
