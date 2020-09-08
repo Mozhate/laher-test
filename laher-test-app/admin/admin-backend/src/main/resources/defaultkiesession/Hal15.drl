@@ -1,0 +1,30 @@
+package com.laher.test.entity
+import com.laher.test.entity.Person
+
+declare Location
+    thing : String
+    location : String
+end
+
+query isContainedIn( String x, String y )
+    Location(x, y;)
+    or
+    ( Location (z, y;) and ?isContainedIn(x, z;))
+end
+
+// demo20使用下
+// 年龄检验查询
+query "checkAge"(String $x,int $y)
+    $x:=String($y>length)
+end
+
+rule "demo20-rule"
+when
+    $c : Person()
+    checkAge($c.getName(),$c.getAge();)
+// 不支持    isContainedIn($c.getAddress(),$c.getLikes();)
+then
+    System.out.println($c);
+// 不支持    insertLogical($c.getAddress(),$c.getLikes());
+    insert(new Location($c.getAddress(),$c.getLikes()));
+end

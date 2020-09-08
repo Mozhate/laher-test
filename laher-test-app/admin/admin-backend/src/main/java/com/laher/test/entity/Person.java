@@ -10,10 +10,27 @@ package com.laher.test.entity;
 public class Person {
     private String name;
     private int age;
+    private String likes;
+    private String address;
+
+    public Person(String name, int age, String likes, String address) {
+        this.name = name;
+        this.age = age;
+        this.likes = likes;
+        this.address = address;
+    }
 
     public Person(String name, int age) {
         this.name = name;
         this.age = age;
+    }
+
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
     }
 
     public int getAge() {
@@ -30,5 +47,19 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" + "name='" + name + '\'' + ", age=" + age + ", likes='" + likes + '\'' + ", address='"
+            + address + '\'' + '}';
     }
 }

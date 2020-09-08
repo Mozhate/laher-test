@@ -1,6 +1,10 @@
 package com.laher.test.entity
 import com.laher.test.entity.Query
 
+function String say(Query q){
+    return "Hal14 say Hello "+q.getQ()+"!!";
+}
+
 query "query1"
     $query : Query(q == 1)
 end
@@ -9,4 +13,6 @@ rule "14 rule"
 when $i : Query()
 then
     System.out.println($i);
+    // demo18 样例
+    System.out.println(say($i));
 end

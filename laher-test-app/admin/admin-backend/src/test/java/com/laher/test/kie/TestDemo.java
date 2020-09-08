@@ -12,9 +12,11 @@ import org.kie.api.builder.ReleaseId;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.builder.model.KieSessionModel;
+import org.kie.api.command.Command;
 import org.kie.api.conf.DeclarativeAgendaOption;
 import org.kie.api.conf.EqualityBehaviorOption;
 import org.kie.api.conf.EventProcessingOption;
+import org.kie.api.definition.type.FactType;
 import org.kie.api.definition.type.Position;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.internal.utils.KieService;
@@ -23,20 +25,18 @@ import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.api.runtime.rule.FactHandle;
 import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
+import org.kie.api.runtime.rule.Variable;
 import org.kie.internal.command.CommandFactory;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author laher
  * @date 2020/9/7/007
  */
 public class TestDemo {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // demo1();
         // demo2();
         // demo3();
@@ -53,12 +53,120 @@ public class TestDemo {
         // new TestDemo().demo14();
         // new TestDemo().demo15();
         // new TestDemo().demo16();
-        new TestDemo().demo17();
+        // new TestDemo().demo17();
+        // new TestDemo().demo18();
+        // new TestDemo().demo19();
+        new TestDemo().demo20();
 
         System.out.println("运行结束");
     }
 
     /**
+     * Phreak规则算法，Phreak传播面向集合。</br>
+     * 当Drools引擎启动时，所有规则都被视为与可能触发规则的模式匹配数据断开链接
+     */
+
+    /**
+     * drl-Drools规则语言，可直接在.drl文本文件中定义的业务规则
+     */
+
+    /**
+     * declare定义，通过rule规则进行过滤查询，简单封装
+     */
+    private void demo20() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.insert(new Person("张三1", 20, "office", "desk"));
+        kieSession.insert(new Person("张三2", 20, "kitchen", "pear"));
+        kieSession.fireAllRules();
+
+        // 执行查询likes=office
+        QueryResults queryResultsRows =
+            kieSession.getQueryResults("isContainedIn", new Object[] {Variable.v, "office"});
+        for (QueryResultsRow row : queryResultsRows) {
+            System.out.println(row.get("x") + "--" + row.get("y"));
+        }
+
+        System.out.println("----------------");
+
+        QueryResults queryResultsRows2 = kieSession.getQueryResults("checkAge", new Object[] {Variable.v, 18});
+        for (QueryResultsRow row : queryResultsRows2) {
+            System.out.println(row.get("x") + "--" + row.get("y"));
+        }
+
+    }
+
+    /**
+     * declare定义，通过fact的命令和查询来进行过去查询,操作起来繁琐
+     */
+    private void demo19() throws IllegalAccessException, InstantiationException {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+
+        FactType locationType = kieSession.getKieBase().getFactType("com.laher.test.entity", "Location");
+
+        // a pear is in the kitchen
+        final Object pear = locationType.newInstance();
+        locationType.set(pear, "thing", "pear");
+        locationType.set(pear, "location", "kitchen");
+
+        // a desk is in the office
+        final Object desk = locationType.newInstance();
+        locationType.set(desk, "thing", "desk");
+        locationType.set(desk, "location", "office");
+
+        // create working memory objects
+        final List<Command<?>> commands = new ArrayList<Command<?>>();
+        // Location instances
+        commands.add(kieServices.getCommands().newInsert(pear));
+        commands.add(kieServices.getCommands().newInsert(desk));
+
+        // 将所有通过命令方式运行
+        // 获取执行结果
+        // fire all rules
+        /*final String queryAlias = "myQuery";
+        commands.add(kieServices.getCommands().newQuery(queryAlias, "isContainedIn", new Object[] { Variable.v, "office" }));
+        
+        final ExecutionResults results = kieSession.execute(kieServices.getCommands().newBatchExecution(commands));
+        final QueryResults qResults = (QueryResults) results.getValue(queryAlias);
+        
+        final List<String> ls = new ArrayList<String>();
+        for (QueryResultsRow r : qResults) {
+            ls.add((String) r.get("x"));
+        }
+        System.out.println(ls.get(0));*/
+
+        // 命令执行一部分，查询query分离执行
+        // 获取执行结果
+        kieSession.execute(kieServices.getCommands().newBatchExecution(commands));
+        QueryResults results = kieSession.getQueryResults("isContainedIn", new Object[] {Variable.v, "office"});
+        List<List<String>> ls = new ArrayList<List<String>>();
+        for (QueryResultsRow r : results) {
+            ls.add(Arrays.asList(new String[] {(String)r.get("x"), (String)r.get("y")}));
+        }
+        System.out.println(ls.size());
+        System.out.println(ls.get(0).get(0) + "-" + ls.get(0).get(1));
+    }
+
+    /**
+     * 调用drl中的函数 function
+     */
+    private void demo18() {
+        // 调用drl中的函数
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.insert(new Query("2"));
+        kieSession.fireAllRules();
+        // 结果：
+        // Query{q=2}
+        // Hal14 say Hello 2!!
+    }
+
+    /**
+     * 在引擎的工作内存中搜索与DRL文件中的规则相关的数据</br>
      * 数据传播模式 Lazy: (Default)数据是在规则执行时在批处理集合中传播的，而不是实时的，因为数据是由用户或应用程序单独插入的</br>
      * Immediate: 数据按照用户或应用程序插入事实的顺序立即传播</br>
      * Eager: 数据（在批处理集合中）延迟传播，但在规则执行之前传播
