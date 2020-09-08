@@ -67,7 +67,10 @@ public class TestDemo {
      */
 
     /**
-     * drl-Drools规则语言，可直接在.drl文本文件中定义的业务规则
+     * drl-Drools规则语言，可直接在.drl文本文件中定义的业务规则</br>
+     * 元数据：</br>
+     * 新的事实类型：可以根据需要在DRL文件中声明其他类型</br>
+     * 数据类型的元数据：将格式中的元数据@key(value)与新的或现有的数据相关联</br>
      */
 
     /**
@@ -78,23 +81,42 @@ public class TestDemo {
         KieContainer kieContainer = kieServices.getKieClasspathContainer();
         KieSession kieSession = kieContainer.newKieSession("ksession1");
         kieSession.insert(new Person("张三1", 20, "office", "desk"));
-        kieSession.insert(new Person("张三2", 20, "kitchen", "pear"));
+        kieSession.insert(new Person("张三2", 18, "kitchen", "pear"));
         kieSession.fireAllRules();
 
+        // 不同query的查询方式
         // 执行查询likes=office
         QueryResults queryResultsRows =
             kieSession.getQueryResults("isContainedIn", new Object[] {Variable.v, "office"});
         for (QueryResultsRow row : queryResultsRows) {
             System.out.println(row.get("x") + "--" + row.get("y"));
         }
-
         System.out.println("----------------");
 
-        QueryResults queryResultsRows2 = kieSession.getQueryResults("checkAge", new Object[] {Variable.v, 18});
+        // checkAge
+        QueryResults queryResultsRows2 = kieSession.getQueryResults("checkAge");
         for (QueryResultsRow row : queryResultsRows2) {
-            System.out.println(row.get("x") + "--" + row.get("y"));
+            System.out.println(row.get("location"));
         }
+        System.out.println("----------------");
 
+        // checkAge2
+        QueryResults results = kieSession.getQueryResults("checkAge2", 18);
+        for (QueryResultsRow row : results) {
+            System.out.println(row.get("location"));
+        }
+        System.out.println("----------------");
+
+        // 输出结果：
+        // Person{name='张三1', age=20, likes='office', address='desk'}
+        // Person{name='张三2', age=18, likes='kitchen', address='pear'}
+        // desk--office
+        // ----------------
+        // Location( thing=desk, location=office, age=20 )
+        // ----------------
+        // Location( thing=desk, location=office, age=20 )
+        // Location( thing=pear, location=kitchen, age=18 )
+        // ----------------
     }
 
     /**

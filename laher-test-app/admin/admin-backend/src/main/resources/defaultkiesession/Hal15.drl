@@ -1,9 +1,11 @@
 package com.laher.test.entity
 import com.laher.test.entity.Person
 
+// 定义元数据
 declare Location
     thing : String
     location : String
+    age : int
 end
 
 query isContainedIn( String x, String y )
@@ -12,19 +14,27 @@ query isContainedIn( String x, String y )
     ( Location (z, y;) and ?isContainedIn(x, z;))
 end
 
-// demo20使用下
+// demo20使用下-------------
 // 年龄检验查询
-query "checkAge"(String $x,int $y)
-    $x:=String($y>length)
+query "checkAge"//(String a,String b)
+    location : Location(age >= 20)
+end
+
+// 年龄检验查询2
+// location 业务端通过get("location")获取Location对象
+// $age 业务端通过getQueryResults("checkAge2",18)函数传来
+query "checkAge2"(int $age)
+    // 将age属性>=$age的Location数据 返回给location对象
+    location : Location(age>=$age)
 end
 
 rule "demo20-rule"
 when
     $c : Person()
-    checkAge($c.getName(),$c.getAge();)
+//    checkAge($c.getName(),$c.getAge();)
 // 不支持    isContainedIn($c.getAddress(),$c.getLikes();)
 then
     System.out.println($c);
 // 不支持    insertLogical($c.getAddress(),$c.getLikes());
-    insert(new Location($c.getAddress(),$c.getLikes()));
+    insert(new Location($c.getAddress(),$c.getLikes(),$c.getAge()));
 end

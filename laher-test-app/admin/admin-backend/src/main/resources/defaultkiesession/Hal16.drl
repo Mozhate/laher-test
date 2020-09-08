@@ -1,0 +1,24 @@
+package com.laher.test.entity
+import java.util.Date
+
+
+// 定义枚举
+//declare enum DaysOfWeek
+//   SUN("Sunday"),MON("Monday"),TUE("Tuesday"),WED("Wednesday"),THU("Thursday"),FRI("Friday"),SAT("Saturday");
+//
+//   fullName : String
+//end
+
+// 定义地址
+declare Address
+    number : int
+    streetName : String
+    city : String
+end
+declare Person
+    name :String
+    // java 中的类
+    dateOfBirth : Date
+    // drl的数据类型
+    address : Address
+end
