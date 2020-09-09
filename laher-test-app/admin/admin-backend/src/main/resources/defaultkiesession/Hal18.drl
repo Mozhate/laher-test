@@ -1,0 +1,21 @@
+package com.laher.test.entity
+import com.laher.test.entity.Alarm
+import java.util.Date
+
+global java.text.SimpleDateFormat fmt;
+
+rule "rule-timer-int"
+    // int
+    // timer ( int: <初始延迟> <重复间隔> )
+    // cron表达式
+    // timer ( cron: <cron expression> )
+    // 每次延迟1秒后，每5分钟再次执行
+    // timer ( int: 1s 1m )
+    // 每秒钟执行一次
+	timer(cron: */1 * * * * ?)
+when
+//    eval(true)
+    Alarm(name == "laherr")
+then
+    System.out.println(fmt.format(new Date())+"rule-timer-int运行");
+end

@@ -29,6 +29,7 @@ import org.kie.api.runtime.rule.Variable;
 import org.kie.internal.command.CommandFactory;
 
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -56,7 +57,9 @@ public class TestDemo {
         // new TestDemo().demo17();
         // new TestDemo().demo18();
         // new TestDemo().demo19();
-        new TestDemo().demo20();
+        // new TestDemo().demo20();
+//         new TestDemo().demo21();
+        new TestDemo().demo22();
 
         System.out.println("运行结束");
     }
@@ -65,13 +68,65 @@ public class TestDemo {
      * Phreak规则算法，Phreak传播面向集合。</br>
      * 当Drools引擎启动时，所有规则都被视为与可能触发规则的模式匹配数据断开链接
      */
+    /**
+     * timer计时器规则属性</br>
+     * 
+     */
+    private void demo22() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.setGlobal("fmt",new SimpleDateFormat("HH:mm:ss"));
+        kieSession.insert(new Alarm("laherr"));
+        System.out.println("start");
+        kieSession.fireAllRules();
+    }
 
     /**
      * drl-Drools规则语言，可直接在.drl文本文件中定义的业务规则</br>
      * 元数据：</br>
      * 新的事实类型：可以根据需要在DRL文件中声明其他类型</br>
      * 数据类型的元数据：将格式中的元数据@key(value)与新的或现有的数据相关联</br>
+     * 可与数据类型或者数据属性关联，元数据可以是数据属性未表示的任何类型的数据，并且在该数据类型的所有实例之间都是一致的
      */
+    private void demo21() throws IllegalAccessException, InstantiationException {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+
+        // 获取drl类型定义
+        FactType factType = kieSession.getKieBase().getFactType("com.laher.test.entity", "PersonDemo");
+        // 创建对象以及设置属性
+        Object demo1 = factType.newInstance();
+        factType.set(demo1, "name", "张三");
+        factType.set(demo1, "dateOfBirth", new Date());
+
+        /*// address是drl类型数据所以需要取出对象
+        FactType demo1AddFactType = kieSession.getKieBase().getFactType("com.laher.test.entity", "Address");
+        Object demo1Address = demo1AddFactType.newInstance();
+        demo1AddFactType.set(demo1Address, "number", 100);
+        demo1AddFactType.set(demo1Address, "city", "北京");
+        // 设置address属性
+        factType.set(demo1, "address", demo1AddFactType.getFactClass());*/
+        factType.set(demo1, "address.number", 100);
+        factType.set(demo1, "address.city", "北京");
+
+        // dayOff是drl枚举属性
+        /*FactType demo1WeekFactType = kieSession.getKieBase().getFactType("com.laher.test.entity", "DaysOfWeek");
+        Object demo1Week = demo1WeekFactType.newInstance();
+        demo1WeekFactType.set(demo1Week, "fullName", "Sunday");
+        // 设置DaysOfWeek枚举属性
+        factType.set(demo1, "dayOff", demo1WeekFactType);*/
+
+        // 批量新增保存运行命令
+        List<Command> ls = new ArrayList<>();
+        ls.add(kieServices.getCommands().newInsert(factType));
+        // ls.add(kieServices.getCommands().newInsert(demo1AddFactType));
+        // ls.add(kieServices.getCommands().newInsert(demo1WeekFactType));
+
+        // 执行
+        kieSession.execute(kieServices.getCommands().newBatchExecution(ls));
+    }
 
     /**
      * declare定义，通过rule规则进行过滤查询，简单封装

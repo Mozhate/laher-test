@@ -3,11 +3,10 @@ import java.util.Date
 
 
 // 定义枚举
-//declare enum DaysOfWeek
-//   SUN("Sunday"),MON("Monday"),TUE("Tuesday"),WED("Wednesday"),THU("Thursday"),FRI("Friday"),SAT("Saturday");
-//
-//   fullName : String
-//end
+declare enum DaysOfWeek
+   SUN("Sunday"),MON("Monday"),TUE("Tuesday"),WED("Wednesday"),THU("Thursday"),FRI("Friday"),SAT("Saturday");
+   fullName : String
+end
 
 // 定义地址
 declare Address
@@ -15,10 +14,25 @@ declare Address
     streetName : String
     city : String
 end
-declare Person
-    name :String
+
+// 使用
+declare PersonDemo
+    // 元数据：可与数据类型或者数据属性关联，元数据可以是数据属性未表示的任何类型的数据，并且在该数据类型的所有实例之间都是一致的
+    // 元数据属性
+    @author(Bob)
+    // 两个元数据项被声明为name属性
+    name :String @key @test( 30 )
     // java 中的类
     dateOfBirth : Date
     // drl的数据类型
     address : Address
+    // 工作枚举
+    dayOff : DaysOfWeek
+end
+
+// 规则
+rule "testDeclare" when
+    $d : PersonDemo(address.number == 100,address.city == '北京')//,dayOff == DaysOfWeek.SUN
+then
+    System.out.println($d);
 end

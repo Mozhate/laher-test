@@ -1,0 +1,94 @@
+//// 全局变量
+//// 除非全局变量具有恒定的不变值，否则请勿使用全局变量在规则中建立条件
+//// 不要使用全局变量在规则之间共享数据，全局变量的用例可能是电子邮件服务的实例
+//// 如：emailService指定为email，然后在规则中email.send()
+//global java.util.List myGlobalList;
+//
+//// 声明为事件类型
+//declare VoiceCall
+//    // 该标签确定在复杂事件处理期间，给定的事实类型是作为常规事实还是在Drools引擎中的事件处理
+//    // 默认：fact，参数：fact|event
+//    @role(event)
+//
+//    // 该标签会自动分配给Drools引擎每个事件
+//    // 默认：Drools会话时钟增加的时间，支持参数：自定义时间戳属性
+//    @timestamp(callDateTime)
+//
+//    // 该标签确定Drools引擎事件持续时间
+//    // 默认：空/零，支持参数：自定义工期属性
+//    @duration(callDuration)
+//
+//    // 该标签确定事件在Drools工作引擎内存中过期前的持续时间，
+//    // 默认：null/事件不匹配规则事件就会过期，支持参数：timeOffset格式的自定义属性[#d][#h][#m][#s][[ms]
+//    @expires(1h15m)
+//
+//    // 该标签确定是否使用类型安全编译数据类型
+//    // 默认：true，支持参数：true\false
+//    @typesafe(false)
+//
+//    // 该标签声明可序列化定义的标识值
+//    // 默认：空，支持单数：自定义整数
+//    @serialVersionUID(42)
+//
+//    // 该标签确定声明的数据类型属性和字段在参数中的位置
+//    // 默认：无，支持参数：自定义整数
+//    // 以下顺序：lastName age firstName
+//    // 父子定义关系注释中，相同位置父优先，子其次，不同位置根据顺序来，无注释的父优先
+//    age : int @posision(1)
+//
+//    // 该标签使数据类型属性可用做数据类型的标识符
+//    // 默认：无，支持参数：无
+//    firstName : String @key @posision(2)
+//    lastName : String @key @posision(0)
+//
+//end
+//
+//// 规则
+//rule "rule-name"
+//// 属性
+//    // 定义规则优先级的整数，相同优先级按先后顺序，大先小后
+//    salience 10
+//
+//    // 是否启用
+//    enabled false
+//
+//    // 包含日期和时间定义的字符串，当前日期在该定义日期之后激活规则，之前规则不能使用
+//    date-effective "4-Sep-2018"
+//
+//    // 包含日期和时间定义的字符串，当前日期在该定义日期之前激活规则，之后规则不能使用
+//    date-expires "4-Oct-2018"
+//
+//    // 规则重新触发先前规则，则无法重新激活
+//    no-loop true
+//
+//    // 对规则分配不同的议程组
+//    agenda-group "group"
+//
+//    // 下次激活该规则，自动将焦点分配给该规则的议程组
+//    auto-focus true
+//
+//    // 同一个激活组中触发了第一个规则，将取消所有其他的规则
+//    activation-group "activationGroup"
+//
+//    // 规则流组，只有相关规则流激活了，规则才会触发
+//    ruleflow-group "ruleflowGroup"
+//
+//    // 下次激活该规则，当活动规则获取焦点时，无法再次激活获取规则
+//    lock-on-active true
+//
+//    // 满足规则条件则触发规则持续时间
+//    duration 1000
+//
+//    // 调度规则的定时器 cron 每15分钟一次
+//    timer ( cron:* 0/15 * * * ? )
+//
+//    // 标识规则代码的表达式为JAVA或MVEL作为语言
+////    dialect "JAVA"
+//
+//when
+//// 条件
+//
+//then
+//// 内容
+//
+//end
