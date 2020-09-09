@@ -4,17 +4,41 @@ import java.util.Date
 
 global java.text.SimpleDateFormat fmt;
 
+declare Bean
+    delay : String = "1s"
+    period : long  = 5
+end
+
+// demo24-表达式定时器
+rule "rule-timer-expr"
+//    timer (expr:$a,$b)
+when
+//    eval(true)
+//    Bean($a:delay,$b:period)
+    Bean(delay == "1s")
+//    $c : Bean()
+then
+    System.out.println(fmt.format(new Date())+"rule-timer-expr运行");
+//    System.out.println(fmt.format(new Date())+"rule-timer-expr运行-"+$a+"--"+$b);
+end
+
+// demo23
 rule "rule-timer-int"
-    // int
+    // int表达式 s m h
+    // 每小时延迟30秒，从2020年1月3日开始，到2020年1月4日结束，或者循环重复50次
+    // timer (int: 30s 1h; start=3-JAN-2020, end=4-JAN-2020, repeat-limit=50)
     // timer ( int: <初始延迟> <重复间隔> )
+
     // cron表达式
     // timer ( cron: <cron expression> )
-    // 每次延迟1秒后，每5分钟再次执行
-    // timer ( int: 1s 1m )
+
+    // 每次延迟1秒后，每5秒再次执行，
+//     timer ( int: 1s 5s)
+
     // 每秒钟执行一次
 	timer(cron: */1 * * * * ?)
 when
-//    eval(true)
+    eval(true)
     Alarm(name == "laherr")
 then
     System.out.println(fmt.format(new Date())+"rule-timer-int运行");

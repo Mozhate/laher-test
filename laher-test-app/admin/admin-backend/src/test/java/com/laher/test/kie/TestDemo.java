@@ -12,16 +12,20 @@ import org.kie.api.builder.ReleaseId;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.builder.model.KieSessionModel;
+import org.kie.api.command.BatchExecutionCommand;
 import org.kie.api.command.Command;
 import org.kie.api.conf.DeclarativeAgendaOption;
 import org.kie.api.conf.EqualityBehaviorOption;
 import org.kie.api.conf.EventProcessingOption;
+import org.kie.api.definition.rule.Rule;
 import org.kie.api.definition.type.FactType;
 import org.kie.api.definition.type.Position;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.internal.utils.KieService;
 import org.kie.api.runtime.*;
 import org.kie.api.runtime.conf.ClockTypeOption;
+import org.kie.api.runtime.conf.TimedRuleExecutionFilter;
+import org.kie.api.runtime.conf.TimedRuleExecutionOption;
 import org.kie.api.runtime.rule.FactHandle;
 import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
@@ -58,8 +62,10 @@ public class TestDemo {
         // new TestDemo().demo18();
         // new TestDemo().demo19();
         // new TestDemo().demo20();
-//         new TestDemo().demo21();
-        new TestDemo().demo22();
+        // new TestDemo().demo21();
+        // new TestDemo().demo22();
+//         new TestDemo().demo23();
+        new TestDemo().demo24();
 
         System.out.println("运行结束");
     }
@@ -68,6 +74,58 @@ public class TestDemo {
      * Phreak规则算法，Phreak传播面向集合。</br>
      * 当Drools引擎启动时，所有规则都被视为与可能触发规则的模式匹配数据断开链接
      */
+
+    /**
+     * time表达式定时器
+     */
+    private void demo24() throws IllegalAccessException, InstantiationException {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        // KieSessionConfiguration kieSessionConfiguration = kieServices.newKieSessionConfiguration();
+        // kieSessionConfiguration.setOption(TimedRuleExecutionOption.YES);
+        // KieSession kieSession = kieContainer.newKieSession("ksession1", kieSessionConfiguration);
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+
+        // 获取declare Bean
+        FactType bean = kieSession.getKieBase().getFactType("com.laher.test.entity", "Bean");
+        Object beanObj = bean.newInstance();
+        bean.set(beanObj, "delay", "1s");
+        // bean.set(beanObj, "period", 1);
+
+        List<Command> ls = new ArrayList<>();
+        ls.add(kieServices.getCommands().newInsert(bean));
+
+        // 执行命令
+        // kieSession.execute(kieServices.getCommands().newBatchExecution(ls));
+        kieSession.execute(CommandFactory.newBatchExecution(ls));
+        kieSession.fireAllRules();
+    }
+
+    /**
+     * time计时器被动模式下执行
+     */
+    private void demo23() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSessionConfiguration kieSessionConfiguration = kieServices.newKieSessionConfiguration();
+        // 修改为活跃模式
+        // kieSessionConfiguration.setOption(TimedRuleExecutionOption.YES);
+        // 配置可过滤自动执行哪些定时规则
+        kieSessionConfiguration.setOption(new TimedRuleExecutionOption.FILTERED((Rule[] rules) -> {
+            // true 不过滤且执行 false 过滤且不执行
+            System.out.println(rules[0].getName());
+            return rules[0].getName().equals("rule-timer-int");
+            // return rules[0].getName().equals("rule-timer-int111111");
+        }));
+        KieSession kieSession = kieContainer.newKieSession("ksession1", kieSessionConfiguration);
+
+        // 和demo22一样
+        kieSession.setGlobal("fmt", new SimpleDateFormat("HH:mm:ss"));
+        kieSession.insert(new Alarm("laherr"));
+        System.out.println("start");
+        kieSession.fireAllRules();
+    }
+
     /**
      * timer计时器规则属性</br>
      * 
@@ -76,10 +134,20 @@ public class TestDemo {
         KieServices kieServices = KieServices.Factory.get();
         KieContainer kieContainer = kieServices.getKieClasspathContainer();
         KieSession kieSession = kieContainer.newKieSession("ksession1");
-        kieSession.setGlobal("fmt",new SimpleDateFormat("HH:mm:ss"));
+        kieSession.setGlobal("fmt", new SimpleDateFormat("HH:mm:ss"));
         kieSession.insert(new Alarm("laherr"));
         System.out.println("start");
-        kieSession.fireAllRules();
+        // step1
+        // 无效果-被动模式
+        // kieSession.fireAllRules();
+
+        // step2
+        // Drools引擎使用计时器处理规则的方式，取决于Drools引擎是处于主动模式还是被动模式
+        // 当触发重复规则结果，由计时器控制的规则将变为活动状态
+        // 默认情况，Drools引擎将以被动模式运行并根据定义的计时器设置评估规则fireAllRules()
+        // 否则Drools引擎将以活动模式启动并持续评估规则，直到用户或应用程序显式调用为止halt()。
+        // 直到停止
+        kieSession.fireUntilHalt();
     }
 
     /**
