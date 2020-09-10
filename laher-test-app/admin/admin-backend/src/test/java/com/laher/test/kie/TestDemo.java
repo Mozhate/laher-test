@@ -64,27 +64,33 @@ public class TestDemo {
         // new TestDemo().demo20();
         // new TestDemo().demo21();
         // new TestDemo().demo22();
-//         new TestDemo().demo23();
-        new TestDemo().demo24();
+        // new TestDemo().demo23();
+        // new TestDemo().demo24();
 
         System.out.println("运行结束");
     }
 
     /**
-     * Phreak规则算法，Phreak传播面向集合。</br>
+     * 规则条件，when包含执行操作和必须满足的条件，如果when部分为空则条件结果为真</br>
+     * 则then第一次fireAllRules()会执行内部操作</br>
+     * 组合条件没有定义关键字（or not and）默认为and
+     */
+
+    /**
+     * todo Phreak规则算法，Phreak传播面向集合。</br>
      * 当Drools引擎启动时，所有规则都被视为与可能触发规则的模式匹配数据断开链接
      */
 
     /**
-     * time表达式定时器
+     * time表达式定时器 todo 未完成 无法扫描赋值到Bean对象
      */
     private void demo24() throws IllegalAccessException, InstantiationException {
         KieServices kieServices = KieServices.Factory.get();
         KieContainer kieContainer = kieServices.getKieClasspathContainer();
-        // KieSessionConfiguration kieSessionConfiguration = kieServices.newKieSessionConfiguration();
-        // kieSessionConfiguration.setOption(TimedRuleExecutionOption.YES);
-        // KieSession kieSession = kieContainer.newKieSession("ksession1", kieSessionConfiguration);
-        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        KieSessionConfiguration kieSessionConfiguration = kieServices.newKieSessionConfiguration();
+        kieSessionConfiguration.setOption(TimedRuleExecutionOption.YES);
+        KieSession kieSession = kieContainer.newKieSession("ksession1", kieSessionConfiguration);
+        kieSession.setGlobal("fmt", new SimpleDateFormat("HH:mm:ss"));
 
         // 获取declare Bean
         FactType bean = kieSession.getKieBase().getFactType("com.laher.test.entity", "Bean");

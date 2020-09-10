@@ -2,6 +2,7 @@ package com.laher.test.entity
 import com.laher.test.entity.Alarm
 import java.util.Date
 
+// 全局设置需要赋值，否则会报错，除非不使用
 global java.text.SimpleDateFormat fmt;
 
 declare Bean
@@ -15,8 +16,8 @@ rule "rule-timer-expr"
 when
 //    eval(true)
 //    Bean($a:delay,$b:period)
-    Bean(delay == "1s")
-//    $c : Bean()
+//    Bean(delay == "1s")
+    $c : Bean()
 then
     System.out.println(fmt.format(new Date())+"rule-timer-expr运行");
 //    System.out.println(fmt.format(new Date())+"rule-timer-expr运行-"+$a+"--"+$b);
@@ -38,7 +39,7 @@ rule "rule-timer-int"
     // 每秒钟执行一次
 	timer(cron: */1 * * * * ?)
 when
-    eval(true)
+//    eval(true)
     Alarm(name == "laherr")
 then
     System.out.println(fmt.format(new Date())+"rule-timer-int运行");
