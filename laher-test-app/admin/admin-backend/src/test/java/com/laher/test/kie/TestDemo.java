@@ -66,6 +66,7 @@ public class TestDemo {
         // new TestDemo().demo22();
         // new TestDemo().demo23();
         // new TestDemo().demo24();
+        new TestDemo().demo25();
 
         System.out.println("运行结束");
     }
@@ -80,6 +81,17 @@ public class TestDemo {
      * todo Phreak规则算法，Phreak传播面向集合。</br>
      * 当Drools引擎启动时，所有规则都被视为与可能触发规则的模式匹配数据断开链接
      */
+
+    /**
+     * OOPath表达式
+     */
+    private void demo25() {
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession1");
+        kieSession.insert(new Student("Big Data"));
+        kieSession.fireAllRules();
+    }
 
     /**
      * time表达式定时器 todo 未完成 无法扫描赋值到Bean对象

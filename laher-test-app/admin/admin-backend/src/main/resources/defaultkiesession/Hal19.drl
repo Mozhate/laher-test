@@ -1,0 +1,9 @@
+package com.laher.test.entity
+import com.laher.test.entity.Student
+
+rule "studentFromOopath"
+when
+    Student($grade: plan/exams[course == "Big Data"]/grades )
+then
+    System.out.println("输出表达式"+$grade);
+end
