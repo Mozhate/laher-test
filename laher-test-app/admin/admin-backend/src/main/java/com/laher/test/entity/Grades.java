@@ -1,20 +1,14 @@
 package com.laher.test.entity;
 
 /**
+ * <p>
+ *
  * @author laher
- * @date 2020/9/10/010
+ * @version 1.0.0
+ * @date 2020/9/11
  */
-public class Student {
+public class Grades {
     private String name;
-    private Plan plan;
-
-    public Plan getPlan() {
-        return plan;
-    }
-
-    public void setPlan(Plan plan) {
-        this.plan = plan;
-    }
 
     public String getName() {
         return name;

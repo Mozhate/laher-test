@@ -45,6 +45,8 @@
 //
 //// 规则
 //rule "rule-name"
+//    // 继承-可以有效避免冗余
+//    extends "rule-parent"
 //// 属性
 //    // 定义规则优先级的整数，相同优先级按先后顺序，大先小后
 //    salience 10
@@ -143,5 +145,44 @@
 //
 //then
 //// 内容
+//    // 满足条件后的操作行为
+//    // set设置字段值
+//    setName('张三')
 //
+//    // modify修改字段，且将结果通知给drools引擎
+//    modify(user){
+//        setName('张三')
+//    }
+//    modify(user)
+//
+//    // insert新增数据到Drools引擎工作存储器中
+//    insert(new User)
+//
+//    // insertLogical逻辑上将数据插入引擎中
+//    insertLogical(new User)
+//
+//    // delete从引擎中删除对象
+//    delete(user)
 //end
+
+//rule "减少冗余满足1条件走默认，满足b条件giveDiscount10，c走giveDiscount5"
+//when
+//    $customer : Customer( age > 60 )
+//    if ( type == "Golden" ) do[giveDiscount10]
+//    else if ( type == "Silver" ) break[giveDiscount5]
+//    $car : Car( owner == $customer )
+//then
+//    modify($car) { setFreeParking( true ) };
+//then[giveDiscount10]
+//    modify($customer) { setDiscount( 0.1 ) };
+//then[giveDiscount5]
+//    modify($customer) { setDiscount( 0.05 ) };
+//end
+
+// drl性能调优
+// 1从左到右定义模式约束的属性和值,如：Person( firstName == "John" )而不是Person( "John" == firstName )
+// 2尽可能在模式约束中使用相等运算符，而不是其他运算符类型,如：模式Person( firstName == "John" )比评估效率更高Person( firstName != "OtherName" )
+// 3首先列出限制性最强的规则条件，对于具有多个条件的规则，请列出从最高到最低限制的条件，以便Drools引擎可以避免在不满足更多限制条件的情况下评估整个条件集
+// 4避免迭代带有过多from子句的大型对象集合
+// 5使用Drools引擎事件侦听器，而不是System.out.println规则中的语句进行调试日志记录
+// 6使用drools-metric模块来识别规则中的障碍，可以使用该drools-metric模块来识别慢速规则，尤其是在处理许多规则时，可以帮助分析Drools发动机性能，不适用于生产环境

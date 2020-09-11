@@ -86,10 +86,23 @@ public class TestDemo {
      * OOPath表达式
      */
     private void demo25() {
+        Exams exams = new Exams();
+        exams.setCourse("Big Data");
+
+        Grades grades = new Grades();
+
+        Plan plan = new Plan();
+        plan.setExams(exams);
+//        plan.setGrades(grades);
+
+        Student student = new Student();
+        student.setName("张三");
+        student.setPlan(plan);
+
         KieServices kieServices = KieServices.Factory.get();
         KieContainer kieContainer = kieServices.getKieClasspathContainer();
         KieSession kieSession = kieContainer.newKieSession("ksession1");
-        kieSession.insert(new Student("Big Data"));
+        kieSession.insert(student);
         kieSession.fireAllRules();
     }
 

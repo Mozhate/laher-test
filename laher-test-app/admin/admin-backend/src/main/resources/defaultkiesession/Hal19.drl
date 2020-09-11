@@ -1,9 +1,23 @@
 package com.laher.test.entity
 import com.laher.test.entity.Student
+import com.laher.test.entity.Exams
+import com.laher.test.entity.Grades
 
+// 第一种形式比较复杂
+rule "studentFromCommon"
+when
+    $s:Student($plan : plan)
+    $e:Exams(course == 'Big Data') from $plan.exams
+    $g:Grades() from $plan.grades
+then
+    System.out.println("student1 输出表达式"+$s.getName());
+end
+
+// 第二种形式通过oopath简化对象图像
 rule "studentFromOopath"
 when
-    Student($grade: plan/exams[course == "Big Data"]/grades )
+    // 如何设置多个条件如grades不为空，后续补充
+    $s:Student($e: plan/exams[course == 'Big Data'])
 then
-    System.out.println("输出表达式"+$grade);
+    System.out.println("student2 输出表达式"+$s.getName());
 end
