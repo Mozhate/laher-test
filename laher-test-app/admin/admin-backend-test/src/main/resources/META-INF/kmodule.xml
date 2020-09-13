@@ -57,4 +57,9 @@
     <kbase name="kbase7" >
         <ksession name="ksession7" type="stateless" />
     </kbase>
+
+    <!--demo26-->
+    <kbase name="kbase8" declarativeAgenda="enabled">
+        <ksession name="ksession8" />
+    </kbase>
 </kmodule>

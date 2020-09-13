@@ -7,7 +7,7 @@ import com.laher.test.entity.Grades
 rule "studentFromCommon"
 when
     $s:Student($plan : plan)
-    $e:Exams(course == 'Big Data') from $plan.exams
+    $e:Exams(course == "Big Data") from $plan.exams
     $g:Grades() from $plan.grades
 then
     System.out.println("student1 输出表达式"+$s.getName());
@@ -17,7 +17,7 @@ end
 rule "studentFromOopath"
 when
     // 如何设置多个条件如grades不为空，后续补充
-    $s:Student($e: plan/exams[course == 'Big Data'])
+    $s:Student($e: /plan/exams[course == "Big Data"])
 then
-    System.out.println("student2 输出表达式"+$s.getName());
+    System.out.println("student2 输出表达式"+$s.getName()+$s.getPlan().getExams().getCourse());
 end

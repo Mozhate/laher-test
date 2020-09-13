@@ -12,5 +12,10 @@
         <module>laher-test-boot</module>
     </modules>
 
+    <parent>
+        <groupId>com.laher.test</groupId>
+        <artifactId>laher-test-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
 </project>

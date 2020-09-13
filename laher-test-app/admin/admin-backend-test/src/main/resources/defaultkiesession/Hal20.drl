@@ -1,0 +1,18 @@
+package com.laher.test.entity
+import com.laher.test.entity.Student
+import com.laher.test.entity.Exams
+import com.laher.test.entity.Grades
+
+rule "demo26"
+when
+    // 如何设置多个条件如grades不为空，后续补充
+    $s:Student($e: /plan/exams[course == "demo26"])
+then
+    System.out.println("student-demo26 输出表达式"+$s.getName());
+end
+
+rule "demo26Eager" @Eager @department('demo26') when
+    $s : String( this == 'go1' )
+then
+    System.out.println("student-demo26Eager 输出表达式"+$s);
+end

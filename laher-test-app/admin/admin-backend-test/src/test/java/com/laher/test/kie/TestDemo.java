@@ -66,7 +66,8 @@ public class TestDemo {
         // new TestDemo().demo22();
         // new TestDemo().demo23();
         // new TestDemo().demo24();
-        new TestDemo().demo25();
+//        new TestDemo().demo25();
+        new TestDemo().demo26();
 
         System.out.println("运行结束");
     }
@@ -83,6 +84,28 @@ public class TestDemo {
      */
 
     /**
+     * 声明式议程允许使用规则控制，其他规则何时触发能否触发</br>
+     * 默认处于关闭状态，KieBase节点增加declarativeAgenda ='enabled'属性
+     */
+    private void demo26() {
+        Exams exams = new Exams();
+        exams.setCourse("demo26");
+
+        Plan plan = new Plan();
+        plan.setExams(exams);
+
+        Student student = new Student();
+        student.setName("张三");
+        student.setPlan(plan);
+
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession8");
+        kieSession.insert(student);
+        kieSession.fireAllRules();
+    }
+
+    /**
      * OOPath表达式
      */
     private void demo25() {
@@ -93,7 +116,7 @@ public class TestDemo {
 
         Plan plan = new Plan();
         plan.setExams(exams);
-//        plan.setGrades(grades);
+        // plan.setGrades(grades);
 
         Student student = new Student();
         student.setName("张三");
