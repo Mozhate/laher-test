@@ -1,0 +1,9 @@
+package rules
+import com.laher.admin.model.HelloRequest
+
+rule "say"
+when
+    $hello : HelloRequest(name=='laher')
+then
+    $hello.setResult($hello.getName()+" hello!");
+end
