@@ -4,6 +4,7 @@ import com.laher.admin.model.HelloRequest;
 import com.laher.admin.service.HelloService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -42,5 +43,25 @@ public class HelloController {
     @RequestMapping("dynamicSay")
     public String dynamicSay(@RequestBody HelloRequest helloRequest) {
         return helloService.dynamicSay(helloRequest);
+    }
+
+    /**
+     * 返回动态规则
+     * 
+     * @return 结果
+     */
+    @RequestMapping("getDynamicRule")
+    public String getDynamicRule() {
+        return helloService.dynamicRule();
+    }
+
+    /**
+     * 设置动态规则
+     * 
+     * @return 结果
+     */
+    @RequestMapping("setDynamicRule")
+    public String setDynamicRule(@RequestParam String rule) {
+        return helloService.dynamicRule(rule);
     }
 }

@@ -26,6 +26,13 @@ public class HelloServiceImpl implements HelloService {
     private KieHelper kieHelper;
 
     /**
+     * 模拟数据库数据
+     */
+    private static String dbRule = "package rules\n" + "import com.laher.admin.model.HelloRequest\n" + "\n"
+        + "rule \"dynamicSay\"\n" + "when\n" + "    $hello : HelloRequest(name=='laher')\n" + "then\n"
+        + "    $hello.setResult($hello.getName()+\" hello!\");\n" + "end";
+
+    /**
      * 输出结果
      *
      * @param helloRequest 数据
@@ -50,17 +57,19 @@ public class HelloServiceImpl implements HelloService {
     public String dynamicSay(HelloRequest helloRequest) {
         // 根据不同
         // 模拟数据库中获取规则
-        String dynamicStr = dynamicRuleData(helloRequest);
+//        String dynamicStr = dynamicRule();
         // 获取规则后进行转换
-        kieHelper.addContent(dynamicStr, ResourceType.DRL);
-        KieBase kieBase = kieHelper.build();
+        kieHelper.addContent(helloRequest.getRule(), ResourceType.DRL);
+        // 加载
+        kieHelper.build();
+        /*KieBase kieBase = kieHelper.build();
         KieSession kieSession = kieBase.newKieSession();
 
         System.out.println("开始动态执行规则");
         kieSession.insert(helloRequest);
         int count = kieSession.fireAllRules();
-        System.out.println("动态执行规则数：" + count);
-        return helloRequest.getResult();
+        System.out.println("动态执行规则数：" + count);*/
+        return helloRequest.getRule();
     }
 
     /**
@@ -68,15 +77,26 @@ public class HelloServiceImpl implements HelloService {
      * 
      * @return 结果
      */
-    private String dynamicRuleData(HelloRequest helloRequest) {
-        return "package rules\n" +
-                "import com.laher.admin.model.HelloRequest\n" +
-                "\n" +
-                "rule \"dynamic say\"\n" +
-                "when\n" +
-                "    $hello : HelloRequest(name=='"+helloRequest.getName()+"')\n" +
-                "then\n" +
-                "    $hello.setResult($hello.getName()+\" dynamic say hello!\");\n" +
-                "end";
+    @Override
+    public String dynamicRule() {
+        return dbRule;
+    }
+
+    /**
+     * 设置规则
+     *
+     * @param rule 数据
+     * @return 结果
+     */
+    @Override
+    public String dynamicRule(String rule) {
+        // 模拟db持久化
+        dbRule = rule;
+        // 刷新当前规则working
+        KieBase kieBase = kieHelper.build();
+        // 删除规则：包名,规则名
+        kieBase.removeRule("rules","dynamicSay");
+        System.out.println("规则刷新成功");
+        return dbRule;
     }
 }
