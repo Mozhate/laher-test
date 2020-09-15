@@ -83,18 +83,6 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-
-            <!--项目-->
-            <dependency>
-                <groupId>com.laher.test</groupId>
-                <artifactId>laher-test-boot</artifactId>
-                <version>${publish.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.laher.test</groupId>
-                <artifactId>laher-test-drools</artifactId>
-                <version>${publish.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

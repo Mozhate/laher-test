@@ -1,11 +1,13 @@
 package com.laher.test.drools.config;
 
+import org.drools.template.parser.RuleTemplate;
 import org.kie.api.KieBase;
 import org.kie.api.KieServices;
 import org.kie.api.builder.*;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.io.ResourceFactory;
+import org.kie.internal.utils.KieHelper;
 import org.kie.spring.KModuleBeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -70,6 +72,12 @@ public class DroolsAutoConfiguration {
     @ConditionalOnMissingBean(KModuleBeanFactoryPostProcessor.class)
     public KModuleBeanFactoryPostProcessor kiePostProcessor() {
         return new KModuleBeanFactoryPostProcessor();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(KieHelper.class)
+    public KieHelper kieHelper() {
+        return new KieHelper();
     }
 
     private KieServices getKieServices() {

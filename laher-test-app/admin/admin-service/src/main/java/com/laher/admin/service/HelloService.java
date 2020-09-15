@@ -17,4 +17,12 @@ public interface HelloService {
      * @return 结果
      */
     String say(HelloRequest helloRequest);
+
+    /**
+     * 动态输出结果
+     * 
+     * @param helloRequest 数据
+     * @return 结果
+     */
+    String dynamicSay(HelloRequest helloRequest);
 }

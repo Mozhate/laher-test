@@ -22,8 +22,25 @@ public class HelloController {
     @Resource
     private HelloService helloService;
 
+    /**
+     * 基本用法
+     * 
+     * @param helloRequest 入参
+     * @return 结果
+     */
     @RequestMapping("say")
     public String say(@RequestBody HelloRequest helloRequest) {
         return helloService.say(helloRequest);
+    }
+
+    /**
+     * 动态数据结果
+     * 
+     * @param helloRequest 入参
+     * @return 结果
+     */
+    @RequestMapping("dynamicSay")
+    public String dynamicSay(@RequestBody HelloRequest helloRequest) {
+        return helloService.dynamicSay(helloRequest);
     }
 }

@@ -11,6 +11,9 @@
     <modules>
         <module>laher-test-boot</module>
         <module>laher-test-drools</module>
+        <module>laher-test-common</module>
+        <module>laher-test-redis</module>
+        <module>laher-test-mybatis</module>
     </modules>
 
     <parent>

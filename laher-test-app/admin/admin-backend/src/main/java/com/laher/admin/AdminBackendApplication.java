@@ -12,8 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
  * @version 1.0.0
  * @date 2020/9/14
  */
-@SpringBootApplication(scanBasePackages = "com.laher")
-@ComponentScan(value = "com.laher")
+@SpringBootApplication(scanBasePackages = {"com.laher"})
+@ComponentScan(value = {"com.laher.*.**"})
 public class AdminBackendApplication {
 
     public static void main(String[] args) {
