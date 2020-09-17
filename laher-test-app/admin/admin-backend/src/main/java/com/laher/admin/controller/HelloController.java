@@ -34,34 +34,4 @@ public class HelloController {
         return helloService.say(helloRequest);
     }
 
-    /**
-     * 动态数据结果
-     * 
-     * @param helloRequest 入参
-     * @return 结果
-     */
-    @RequestMapping("dynamicSay")
-    public String dynamicSay(@RequestBody HelloRequest helloRequest) {
-        return helloService.dynamicSay(helloRequest);
-    }
-
-    /**
-     * 返回动态规则
-     * 
-     * @return 结果
-     */
-    @RequestMapping("getDynamicRule")
-    public String getDynamicRule() {
-        return helloService.dynamicRule();
-    }
-
-    /**
-     * 设置动态规则
-     * 
-     * @return 结果
-     */
-    @RequestMapping("setDynamicRule")
-    public String setDynamicRule(@RequestParam String rule) {
-        return helloService.dynamicRule(rule);
-    }
 }

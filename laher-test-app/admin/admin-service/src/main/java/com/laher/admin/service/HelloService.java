@@ -17,26 +17,4 @@ public interface HelloService {
      * @return 结果
      */
     String say(HelloRequest helloRequest);
-
-    /**
-     * 动态输出结果
-     * 
-     * @param helloRequest 数据
-     * @return 结果
-     */
-    String dynamicSay(HelloRequest helloRequest);
-
-    /**
-     * 获取规则
-     * 
-     * @return 结果
-     */
-    String dynamicRule();
-
-    /**
-     * 设置规则
-     * 
-     * @return 结果
-     */
-    String dynamicRule(String rule);
 }

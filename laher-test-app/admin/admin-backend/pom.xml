@@ -16,6 +16,11 @@
             <groupId>com.laher.test</groupId>
             <artifactId>admin-service</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.laher.test</groupId>
+            <artifactId>laher-test-tested</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -39,6 +39,11 @@
                 <artifactId>laher-test-drools</artifactId>
                 <version>${publish.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.laher.test</groupId>
+                <artifactId>laher-test-tested</artifactId>
+                <version>${publish.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

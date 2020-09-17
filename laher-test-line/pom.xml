@@ -14,6 +14,7 @@
         <module>laher-test-common</module>
         <module>laher-test-redis</module>
         <module>laher-test-mybatis</module>
+        <module>laher-test-tested</module>
     </modules>
 
     <parent>
