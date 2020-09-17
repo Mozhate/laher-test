@@ -40,4 +40,10 @@ public class UserInfo {
     }
 
     public UserInfo() {}
+
+    @Override
+    public String toString() {
+        return "UserInfo{" + "id=" + id + ", name='" + name + ", height=" + height + ", age=" + age + ", tickets="
+            + tickets + ", facades=" + facades + ", pass=" + pass + '}';
+    }
 }

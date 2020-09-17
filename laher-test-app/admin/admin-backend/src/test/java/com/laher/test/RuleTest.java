@@ -53,22 +53,54 @@ public class RuleTest {
         // 初始化
         System.out.println("*******初始化*******");
         dbRules();
-        System.out.println("初始化规则成功：" + dbRuleInfoList.size());
+        System.out.println("初始化-规则成功：" + dbRuleInfoList.size());
         dbUsers();
-        System.out.println("初始化用户成功：" + dbUserInfoList.size());
+        System.out.println("初始化-用户成功：" + dbUserInfoList.size());
         // 将规则加入到drools生命周期
         loadRule();
         System.out.println("*******************");
     }
 
     /**
+     * 基础用法
      */
     @Test
     public void run() {
-        UserInfo userInfo = getUser(1);
-        kieSession.insert(userInfo);
+        kieSession.insert(getUser(1));
+        kieSession.insert(getUser(2));
+        kieSession.insert(getUser(3));
+        kieSession.insert(getUser(4));
         int count = kieSession.fireAllRules();
         System.out.println("规则执行：" + count);
+    }
+
+    /**
+     * 模拟后台动态修改规则
+     */
+    @Test
+    public void runDynamic() {
+        // 当前规则下只有用户1可正常通过
+        System.out.println("****推送数据****");
+        run();
+
+        // 将服装条件改为：成人套装，
+        System.out.println("****模拟后台管理系统，修改规则数据持久化");
+        String newRule = "import com.laher.admin.entity.UserInfo\n" + //
+            "rule rule_1\n" + //
+            "when\n" + //
+            "    $u:UserInfo(height>=160,age>=14,tickets contains \"冰雪门票\",facades contains \"成人套装\")\n" + //
+            "then\n" + //
+            "    $u.setPass(true);\n" + //
+            "    System.out.println(\"闸机放行,\"+$u.toString());\n" + //
+            "end\n";
+        getRule(1).setRule(newRule);
+
+        System.out.println("****重新构建规则处理器");
+        loadRule();
+
+        System.out.println("****推送数据****");
+        // 进行同样的操作，查看结果是否一致
+        run();
     }
 
     /**
@@ -88,22 +120,31 @@ public class RuleTest {
      */
     private void dbRules() {
         // 场景1：冰雪场馆，要求身高大于160cm，年龄大于14岁，有冰雪门票，有冰雪套装
-        String ruleStr = "import com.laher.admin.entity.UserInfo\n" + //
+        String ruleStr1 = "import com.laher.admin.entity.UserInfo\n" + //
             "\n" + //
             "rule rule_1\n" + //
             "when\n" + //
             "    $u:UserInfo(height>=160,age>=14,tickets contains \"冰雪门票\",facades contains \"冰雪套装\")\n" + //
             "then\n" + //
             "    $u.setPass(true);\n" + //
-            "    System.out.println(\"闸机放行,\"+$u.getName()+\" 通过\");\n" + //
+            "    System.out.println(\"闸机放行,\"+$u.toString());\n" + //
             "end\n";
-        RuleInfo rule1 = new RuleInfo(1, "冰雪场馆", "1", ruleStr);
+        RuleInfo rule1 = new RuleInfo(1, "冰雪场馆", "1", ruleStr1);
 
         // 场景2：游泳场馆，要求身高大于120cm，年龄大于8岁，有游泳门票，有泳裤
-        // RuleInfo rule2 = new RuleInfo(2, "游泳场馆", "2", "");
+        String ruleStr2 = "import com.laher.admin.entity.UserInfo\n" + //
+            "\n" + //
+            "rule rule_2\n" + //
+            "when\n" + //
+            "    $u:UserInfo(height>=120,age>=8,tickets contains \"游泳门票\",facades contains \"泳裤\")\n" + //
+            "then\n" + //
+            "    $u.setPass(true);\n" + //
+            "    System.out.println(\"闸机放行,\"+$u.toString());\n" + //
+            "end\n";
+        RuleInfo rule2 = new RuleInfo(2, "游泳场馆", "2", ruleStr2);
 
         dbRuleInfoList.add(rule1);
-        // dbRuleInfoList.add(rule2);
+        dbRuleInfoList.add(rule2);
     }
 
     /**
@@ -114,7 +155,7 @@ public class RuleTest {
     private void dbUsers() {
         // 冰雪
         UserInfo user1 = new UserInfo(1, "张三", 173, 25, "冰雪门票", "冰雪套装");
-        UserInfo user2 = new UserInfo(2, "李四", 160, 14, "冰雪门票", "无套装");
+        UserInfo user2 = new UserInfo(2, "李四", 160, 14, "冰雪门票", "成人套装");
 
         // 游泳
         UserInfo user3 = new UserInfo(3, "王五", 133, 18, "游泳门票", "泳裤");

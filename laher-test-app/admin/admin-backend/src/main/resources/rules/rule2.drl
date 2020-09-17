@@ -1,8 +1,8 @@
 //import com.laher.admin.entity.UserInfo
 //
-//rule rule_1
+//rule rule_2
 //when
-//    $u:UserInfo(height>=160,age>=14,tickets contains "冰雪门票",facades contains "冰雪套装")
+//    $u:UserInfo(height>=120,age>=8,tickets contains "游泳门票",facades contains "泳裤")
 //then
 //    $u.setPass(true);
 //    System.out.println("闸机放行,"+$u.toString());
