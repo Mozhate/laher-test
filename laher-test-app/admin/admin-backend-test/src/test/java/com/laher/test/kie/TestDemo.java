@@ -1,14 +1,13 @@
 package com.laher.test.kie;
 
 import com.laher.test.entity.*;
+import com.laher.test.entity.Message;
 import com.laher.test.kie.entity.Cheese;
 import org.drools.core.event.DefaultAgendaEventListener;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.KieScanner;
-import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.*;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.builder.model.KieSessionModel;
@@ -22,6 +21,7 @@ import org.kie.api.definition.type.FactType;
 import org.kie.api.definition.type.Position;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.internal.utils.KieService;
+import org.kie.api.io.Resource;
 import org.kie.api.runtime.*;
 import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.api.runtime.conf.TimedRuleExecutionFilter;
@@ -66,8 +66,9 @@ public class TestDemo {
         // new TestDemo().demo22();
         // new TestDemo().demo23();
         // new TestDemo().demo24();
-//        new TestDemo().demo25();
-        new TestDemo().demo26();
+        // new TestDemo().demo25();
+        // new TestDemo().demo26();
+        new TestDemo().demo27();
 
         System.out.println("运行结束");
     }
@@ -77,6 +78,40 @@ public class TestDemo {
      * 则then第一次fireAllRules()会执行内部操作</br>
      * 组合条件没有定义关键字（or not and）默认为and
      */
+
+    /**
+     * Drools语言：DSL<br/>
+     * DSL域特定语言，是创建专用问题域的规则预言方法<br/>
+     * 一组DSL定义包括从DSL“语句”到DRL结构的转换<br/>
+     * DSL可以充当规则创作（和规则创作者）与域对象建模以及Drools引擎的本地语言和方法所导致的技术复杂性之间的隔离层<br/>
+     * 如果您的规则需要由非程序员的领域专家（例如，业务分析师）阅读和验证，则应考虑使用DSL<br/>
+     * 它隐藏了实现细节，并专注于适当的规则逻辑<br/>
+     */
+    private void demo27() {
+        KieServices kieServices = KieServices.Factory.get();
+        // 资源加载
+
+        KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
+        kieFileSystem.write(KieServices.Factory.get().getResources().newClassPathResource("defaultkiesession/dsl/sample.dsl"));
+        kieFileSystem.write(KieServices.Factory.get().getResources().newClassPathResource("defaultkiesession/dsl/sample.dslr"));
+
+        KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
+        kieFileSystem.writeKModuleXML(kieModuleModel.toXML());
+
+        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem);
+
+        KieModule kieModule = kieBuilder.getKieModule();
+
+        KieContainer container = KieServices.Factory.get().newKieContainer(kieModule.getReleaseId());
+
+        KieBase kieBase = container.getKieBase();
+
+        System.out.println(kieBase.getKiePackages().size());
+
+        KieSession kieSession = kieBase.newKieSession();
+
+        kieSession.fireAllRules();
+    }
 
     /**
      * todo Phreak规则算法，Phreak传播面向集合。</br>

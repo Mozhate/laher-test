@@ -1,0 +1,9 @@
+package dsl
+
+expander sample.dsl
+
+rule "simple"
+    when
+    then
+        hello
+end
