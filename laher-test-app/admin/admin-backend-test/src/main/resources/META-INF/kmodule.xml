@@ -62,4 +62,9 @@
     <kbase name="kbase8" declarativeAgenda="enabled">
         <ksession name="ksession8" />
     </kbase>
+
+    <!--demo28-->
+    <kbase name="kbase28" packages="org.demo28.*">
+        <ksession name="ksession28" />
+    </kbase>
 </kmodule>

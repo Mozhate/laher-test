@@ -25,6 +25,10 @@ public class Person {
         this.age = age;
     }
 
+    public Person(String name) {
+        this.name = name;
+    }
+
     public String getLikes() {
         return likes;
     }

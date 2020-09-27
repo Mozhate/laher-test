@@ -1,0 +1,47 @@
+// 用户购物满200减20
+// 用户购物满400减50
+// 用户购物满800减120
+
+package com.laher.test.entity
+
+import com.laher.test.entity.Coupons
+import com.laher.test.entity.Guest
+
+expander demo28.dsl
+
+rule "couponMini"
+salience 0
+activation-group "offerOne"
+when
+    金额不足 200
+then
+    无法优惠全额购买
+end
+
+rule "coupon200"
+salience 1
+// 优惠一次
+activation-group "offerOne"
+when
+    购物金额达 200
+then
+    实际金额减少 20
+end
+
+rule "coupon400"
+salience 2
+activation-group "offerOne"
+when
+    购物金额达 400
+then
+    实际金额减少 60
+end
+
+rule "coupon800"
+salience 3
+activation-group "offerOne"
+when
+    购物金额达 800
+then
+    实际金额减少 120
+end

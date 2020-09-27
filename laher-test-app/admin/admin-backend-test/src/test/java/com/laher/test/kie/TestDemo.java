@@ -68,7 +68,8 @@ public class TestDemo {
         // new TestDemo().demo24();
         // new TestDemo().demo25();
         // new TestDemo().demo26();
-        new TestDemo().demo27();
+        // new TestDemo().demo27();
+        new TestDemo().demo28();
 
         System.out.println("运行结束");
     }
@@ -78,6 +79,32 @@ public class TestDemo {
      * 则then第一次fireAllRules()会执行内部操作</br>
      * 组合条件没有定义关键字（or not and）默认为and
      */
+
+    /**
+     * dsl 案例：</br>
+     * 用户购物满200减20 用户购物满400减50 用户购物满800减120
+     */
+    private void demo28() {
+        KieServices kieServices = KieServices.Factory.get();
+
+        // 购物用户
+        Guest g1 = new Guest("张三", 970);
+        Guest g2 = new Guest("李四", 110);
+        Guest g3 = new Guest("王五", 580);
+        Guest g4 = new Guest("赵六", 620);
+        Guest g5 = new Guest("钱七", 770);
+        List<Guest> gs = Arrays.asList(g1, g2, g3, g4, g5);
+
+        // 规则加载和执行
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession("ksession28");
+        for (Guest g : gs) {
+            // 加载优惠额度
+            kieSession.insert(g);
+            // 执行规则
+            kieSession.fireAllRules();
+        }
+    }
 
     /**
      * Drools语言：DSL<br/>
@@ -92,8 +119,10 @@ public class TestDemo {
         // 资源加载
 
         KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
-        kieFileSystem.write(KieServices.Factory.get().getResources().newClassPathResource("defaultkiesession/dsl/sample.dsl"));
-        kieFileSystem.write(KieServices.Factory.get().getResources().newClassPathResource("defaultkiesession/dsl/sample.dslr"));
+        kieFileSystem
+            .write(KieServices.Factory.get().getResources().newClassPathResource("defaultkiesession/dsl/sample.dsl"));
+        kieFileSystem
+            .write(KieServices.Factory.get().getResources().newClassPathResource("defaultkiesession/dsl/sample.dslr"));
 
         KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
         kieFileSystem.writeKModuleXML(kieModuleModel.toXML());
@@ -109,6 +138,9 @@ public class TestDemo {
         System.out.println(kieBase.getKiePackages().size());
 
         KieSession kieSession = kieBase.newKieSession();
+
+        Person person = new Person("张三1");
+        kieSession.insert(person);
 
         kieSession.fireAllRules();
     }

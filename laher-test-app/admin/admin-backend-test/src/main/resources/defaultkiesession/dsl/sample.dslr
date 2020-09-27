@@ -1,9 +1,13 @@
+//业务人员写
 package dsl
+
+import com.laher.test.entity.Person
 
 expander sample.dsl
 
 rule "simple"
     when
+        如果有人叫"张三"
     then
-        hello
+        "你好 张三"
 end
