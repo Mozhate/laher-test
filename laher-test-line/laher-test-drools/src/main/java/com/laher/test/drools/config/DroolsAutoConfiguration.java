@@ -12,6 +12,7 @@ import org.kie.spring.KModuleBeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -36,7 +37,9 @@ public class DroolsAutoConfiguration {
     public KieFileSystem kieFileSystem() throws IOException {
         KieFileSystem kieFileSystem = getKieServices().newKieFileSystem();
         for (Resource file : getRuleFiles()) {
-            kieFileSystem.write(ResourceFactory.newClassPathResource(RULES_PATH + file.getFilename(), "UTF-8"));
+            String filePath = ((FileSystemResource)file).getPath();
+            String fileLocalPath = filePath.substring(filePath.indexOf(RULES_PATH));
+            kieFileSystem.write(ResourceFactory.newClassPathResource(fileLocalPath, "UTF-8"));
         }
         return kieFileSystem;
     }
